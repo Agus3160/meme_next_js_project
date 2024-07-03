@@ -1,23 +1,13 @@
 "use client"
 
-import { ApiResponse, TypeSignInSchema, signInSchema } from '@/lib/definitions'
-import { signIn } from 'next-auth/react'
+import { signInSchema } from '@/lib/definitions'
 import GenericForm from '../global/GenericForm'
 import { KeyRound } from 'lucide-react'
+import { signInHandler } from '@/backend/controllers/user'
 
 type Props = {}
 
 export default function LoginForm({}: Props) {
-
-  const signInHandler = async (data: TypeSignInSchema): Promise<ApiResponse> => {
-    const res = await signIn("credentials", {
-      ...data,
-      redirect: false,
-    })
-    if(res?.error) return {error: res.error, success: false}
-    return {success: true, message:"Sign in successful"}
-  }
-
   return (
     <div className='flex min-h-full w-full flex-col'>
     <GenericForm 

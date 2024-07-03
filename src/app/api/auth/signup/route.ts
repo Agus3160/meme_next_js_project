@@ -1,10 +1,10 @@
 import { ApiError } from "next/dist/server/api-utils";
 import { NextRequest, NextResponse, } from "next/server";
-import prisma from "@/lib/db";
 import bcrypt from "bcrypt"
 import { signUpSchema } from "@/lib/definitions";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { generateApiErrorResponse, generateApiSuccessResponse } from "@/lib/api/global";
+import { createUser } from "@/backend/services/user";
 
 export async function POST(req:NextRequest, res:NextResponse) {
 
@@ -21,14 +21,7 @@ export async function POST(req:NextRequest, res:NextResponse) {
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    await prisma.user.create({
-      data: {
-        username,
-        email,
-        name,
-        password: hashedPassword
-      }
-    })
+    const user = await createUser({username, email, name, password: hashedPassword})
     
     return generateApiSuccessResponse("User created successfully", 201)
   }catch(error){

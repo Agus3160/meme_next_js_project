@@ -22,7 +22,7 @@ export default function NavBar() {
   ];
 
   return (
-    <div className='bg-slate-700 flex justify-between items-center h-16 p-2 text-white'>
+    <div className='bg-slate-700 flex justify-between items-center h-16 p-2 text-white '>
       <div className='flex gap-2 items-center'>
         <Image 
           src="/img/mememundi.webp"
@@ -44,26 +44,27 @@ export default function NavBar() {
         ))}
       </ul>
 
-      <div onClick={handleNav} className='block md:hidden'>
-        {nav ? <Menu size={32} /> : <Menu size={32} />}
+      <div onClick={handleNav} className='block hover:text-gray-400 duration-300 cursor-pointer md:hidden'>
+        {nav ? <Menu className='text-gray-400' size={32} /> : <Menu size={32} />}
       </div>
 
       <ul
         className={
           nav
-            ? 'fixed md:hidden left-0 top-0 w-[60%] h-full border-r border-r-gray-900 bg-slate-800 ease-in-out duration-500'
-            : 'ease-in-out w-[60%] duration-500 fixed top-0 bottom-0 left-[-100%]'
+            ? 'fixed md:hidden left-0 top-0 w-[60%] h-full border-r border-r-gray-900 bg-slate-800 ease-in-out duration-500 z-20'
+            : 'ease-in-out w-[60%] duration-500 fixed top-0 bottom-0 left-[-100%] z-20'
         }
       >
         <h1 className='w-full text-3xl font-bold text-white m-4'>Menu</h1>
 
         {navItems.map(item => (
-          <li
+          <Link
             key={item.id}
-            className='p-4 border-b hover:bg-blue-900 duration-300 hover:text-black cursor-pointer border-gray-600'
+            href={item.url}
+            className=' '
           >
-            <Link href={item.url}>{item.text}</Link>
-          </li>
+            <p className='w-full p-4 border-b hover:bg-blue-900 duration-300 hover:text-black cursor-pointer border-gray-600' >{item.text}</p>
+          </Link>
         ))}
       </ul>
     </div>
