@@ -2,11 +2,11 @@ import { ApiResponse } from "../definitions"
 import { NextResponse } from "next/server"
 
 const generateApiErrorResponse = (error:string, statusCode: number) => {
-  return NextResponse.json({ error: error, success: false }, { status: statusCode })
+  return NextResponse.json({ error: error, success: false }, { status: statusCode, headers:{ 'Content-Type': 'application/json'} })
 }
 
 const generateApiSuccessResponse = <T>(message:string, statusCode: number, data?: T) => {
-  return NextResponse.json({ data, message, success: true }, { status: statusCode })
+  return NextResponse.json({ data, message, success: true }, { status: statusCode, headers:{ 'Content-Type': 'application/json'}  })
 }
 
 const fetchPlus = async <T=undefined>(url: string, options?: RequestInit) => { 

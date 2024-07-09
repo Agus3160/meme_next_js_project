@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 type Props = {
   className?: string;
@@ -23,6 +23,7 @@ export default function CustomDraggable({ children, className, rotate, minWidth,
   const boxRef = useRef<HTMLDivElement>(null);
 
   const resizerRef = useRef<Resizer>({ S: null, W: null, N: null, E: null });
+  const [isFocused, setIsFocused] = useState(false);
 
   const isClicked = useRef<boolean>(false);
 
@@ -170,7 +171,18 @@ export default function CustomDraggable({ children, className, rotate, minWidth,
       box.style.left = `${nextX}px`;
     }
 
+    const onMouseEnterContainer = () => {
+      setIsFocused(true);
+    }
+
+    const onMouseLeaveContainer = () => {
+      setIsFocused(false);
+    }
+
     box.addEventListener('mousedown', onDragMouseDown);
+
+    container.addEventListener("mouseenter", onMouseEnterContainer);
+    container.addEventListener("mouseleave", onMouseLeaveContainer);
 
     S.addEventListener('mousedown', onResizeMouseDown);
     W.addEventListener('mousedown', onResizeMouseDown);
@@ -181,6 +193,9 @@ export default function CustomDraggable({ children, className, rotate, minWidth,
       box.removeEventListener('mousedown', onDragMouseDown);
       container.removeEventListener('mousemove', onDragMouseMove);
       container.removeEventListener('mouseup', onDragMouseUp);
+
+      container.removeEventListener("mouseenter", onMouseEnterContainer);
+      container.removeEventListener("mouseleave", onMouseLeaveContainer);
 
       S.removeEventListener('mousedown', onResizeMouseDown);
       W.removeEventListener('mousedown', onResizeMouseDown);
@@ -197,13 +212,16 @@ export default function CustomDraggable({ children, className, rotate, minWidth,
     <div
       id={id}
       ref={boxRef}
-      className={`absolute border-2 border-dashed border-white overflow-hidden ${className}`}
+      className={
+        `absolute p-[2.5px] ${className !== undefined ? className : ''}` 
+        + (isFocused? ' outline-1 outline-dashed outline-gray-500' : ' outline-none')
+      }
       style={{ top: 12, left: 12, width: '100px', height: '100px', rotate: `${rotate}deg` }}
     >
-      <div ref={el => { resizerRef.current.S = el }} className='absolute bottom-[-4px] left-[calc(50%-4px)] w-[8px] h-[8px] bg-white cursor-s-resize'></div>
-      <div ref={el => { resizerRef.current.W = el }} className='absolute top-[calc(50%-4px)] left-[-4px] w-[8px] h-[8px] bg-white cursor-w-resize'></div>
-      <div ref={el => { resizerRef.current.E = el }} className='absolute top-[calc(50%-4px)] right-[-4px] w-[8px] h-[8px] bg-white cursor-e-resize'></div>
-      <div ref={el => { resizerRef.current.N = el }} className='absolute top-[-4px] left-[calc(50%-4px)] w-[8px] h-[8px] bg-white cursor-n-resize'></div>
+      <div ref={el => { resizerRef.current.S = el }} className={isFocused? 'absolute bottom-[-4px] left-[calc(50%-4px)] w-[8px] h-[8px] bg-gray-500 cursor-s-resize' : 'hidden'}></div>
+      <div ref={el => { resizerRef.current.W = el }} className={isFocused? 'absolute top-[calc(50%-4px)] left-[-4px] w-[8px] h-[8px] bg-gray-500 cursor-w-resize' : 'hidden'}></div>
+      <div ref={el => { resizerRef.current.E = el }} className={isFocused? 'absolute top-[calc(50%-4px)] right-[-4px] w-[8px] h-[8px] bg-gray-500 cursor-e-resize' : 'hidden'}></div>
+      <div ref={el => { resizerRef.current.N = el }} className={isFocused? 'absolute top-[-4px] left-[calc(50%-4px)] w-[8px] h-[8px] bg-gray-500 cursor-n-resize' : 'hidden'}></div>
       {children}
     </div>
   );
