@@ -21,6 +21,8 @@ model User {
   name String
   password String
 
+  posts Post[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -44,10 +46,25 @@ model Image {
   urlOriginalImg String
   urlBlurImg String
 
-  pathOriginalImg String
-  pathBlurImg String
+  pathOriginalImg String @unique
+  pathBlurImg String     @unique
 
   templates Template? 
+  post Post?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id    String @id @default(uuid())
+
+  title  String
+  imageId String @unique
+  authorId String
+
+  image Image @relation(fields: [imageId], references: [id])
+  author User @relation(fields: [authorId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

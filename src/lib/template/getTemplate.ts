@@ -5,10 +5,6 @@ const getTemplate = async (templateId: string) => {
   try {
     const res = await fetch(`/api/template/${templateId}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      }
     })
 
     if(!res.ok) {

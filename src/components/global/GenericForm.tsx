@@ -5,8 +5,9 @@ import { useForm, FieldValues, UseFormReturn, Path } from 'react-hook-form'
 import { ZodSchema } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ApiResponse } from '@/lib/definitions'
-import { LoaderCircle } from 'lucide-react'
 import { toast } from 'react-toastify'
+import GenericInput from '../forms/GenericInput'
+import SubmitButton from '../forms/SubmitButton'
 
 interface CustomFormProps<D, T extends FieldValues > {
   title: string
@@ -44,22 +45,17 @@ export default function GenericForm<D, T extends FieldValues>({ schema, onSubmit
       </div>
 
       {fields.map(({ name, label, type, placeholder }) => (
-        <div key={String(name)} className='flex flex-col gap-1'>
-          <label htmlFor={String(name)}>{label}</label>
-          <input
-            className={'p-2 rounded bg-slate-700 focus:outline-1 outline-none ' + (errors[name]? 'focus:outline-red-500':'focus:outline-blue-700') }
-            id={String(name)}
-            {...register(name)}
-            type={type} 
-            placeholder={placeholder}
-          />
-          {errors[name] && <p className='text-sm text-red-500'>{errors[name]?.message as string}</p>}
-        </div>
+        <GenericInput 
+          key={String(name)}
+          register={register}
+          name={name}
+          label={label}
+          type={type}
+          errors={errors}
+          placeholder={placeholder}
+        />
       ))}
-      <button disabled={isSubmitting} type="submit" className='p-2 rounded active:bg-blue-700 bg-blue-600 hover:bg-blue-500 outline-none flex gap-2 items-center justify-center'>
-        <p>{buttonText}</p> 
-        {isSubmitting && <LoaderCircle size={16} className='animate-spin' />}
-      </button>
+      <SubmitButton buttonText={buttonText} isLoading={isSubmitting} />
     </form>
   )
 }

@@ -211,17 +211,19 @@ export default function CustomDraggable({ children, className, rotate, minWidth,
   return (
     <div
       id={id}
+      draggable={false}
       ref={boxRef}
       className={
-        `absolute p-[2.5px] ${className !== undefined ? className : ''}` 
-        + (isFocused? ' outline-1 outline-dashed outline-gray-500' : ' outline-none')
+        `absolute unselectable p-[2.5px] ${className !== undefined ? className : ''}` 
+        + (isFocused? ' outline-2 outline-dashed outline-gray-400' : ' outline-none')
       }
       style={{ top: 12, left: 12, width: '100px', height: '100px', rotate: `${rotate}deg` }}
     >
-      <div ref={el => { resizerRef.current.S = el }} className={isFocused? 'absolute bottom-[-4px] left-[calc(50%-4px)] w-[8px] h-[8px] bg-gray-500 cursor-s-resize' : 'hidden'}></div>
-      <div ref={el => { resizerRef.current.W = el }} className={isFocused? 'absolute top-[calc(50%-4px)] left-[-4px] w-[8px] h-[8px] bg-gray-500 cursor-w-resize' : 'hidden'}></div>
-      <div ref={el => { resizerRef.current.E = el }} className={isFocused? 'absolute top-[calc(50%-4px)] right-[-4px] w-[8px] h-[8px] bg-gray-500 cursor-e-resize' : 'hidden'}></div>
-      <div ref={el => { resizerRef.current.N = el }} className={isFocused? 'absolute top-[-4px] left-[calc(50%-4px)] w-[8px] h-[8px] bg-gray-500 cursor-n-resize' : 'hidden'}></div>
+      
+      <div draggable={false} ref={el => { resizerRef.current.S = el }} className={isFocused? 'absolute bottom-[-4px] left-[calc(50%-4px)] w-[8px] h-[8px] bg-gray-400 outline-2 outline outline-black cursor-s-resize' : 'hidden'}></div>
+      <div draggable={false} ref={el => { resizerRef.current.W = el }} className={isFocused? 'absolute top-[calc(50%-4px)] left-[-4px] w-[8px] h-[8px] bg-gray-400 outline-2 outline outline-black cursor-w-resize' : 'hidden'}></div>
+      <div draggable={false} ref={el => { resizerRef.current.E = el }} className={isFocused? 'absolute top-[calc(50%-4px)] right-[-4px] w-[8px] h-[8px] bg-gray-400 outline-2 outline outline-black cursor-e-resize' : 'hidden'}></div>
+      <div draggable={false} ref={el => { resizerRef.current.N = el }} className={isFocused? 'absolute top-[-4px] left-[calc(50%-4px)] w-[8px] h-[8px] bg-gray-400 outline-2 outline outline-black cursor-n-resize' : 'hidden'}></div>
       {children}
     </div>
   );

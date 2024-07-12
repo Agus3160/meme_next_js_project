@@ -10,21 +10,17 @@ type Props = {
 
 export default function FontEditor({fontFamily='Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif', fontSize, textColor, borderColor, text}: Props) {
   return (
-    <p
+    <div
       draggable={false}
       className={'unselectable'}
       style={{
         'fontFamily':`${fontFamily}`,
         'color':`${textColor}`,
-        'fontSize':`${fontSize}`,
-        'textShadow':`
-          1px 1px 0 ${borderColor},
-          -1px 1px 0 ${borderColor},
-          -1px -1px 0 ${borderColor},
-          1px -1px 0 ${borderColor}`
+        'fontSize':`${fontSize}px`,
+        'textShadow':`2px 2px 5px ${borderColor}`
       }}
     >
       {text}
-    </p>
+    </div>
   )
 }

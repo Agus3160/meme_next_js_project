@@ -6,9 +6,7 @@ import FontEditor from '@/components/post/FontEditor';
 import React, { useEffect, useState } from 'react';
 import { TypeTextBoxSchema } from '@/lib/definitions';
 import { useSearchParams } from 'next/navigation';
-import html2canvas from 'html2canvas';
-import { Download } from 'lucide-react';
-import { downloadImage, prepareTemplateToPost } from '@/lib/post/utils';
+import { prepareTemplateToPost } from '@/lib/post/utils';
 import ErrorPage from '@/components/pages/ErrorPage';
 import LoadingPage from '@/components/pages/LoadingPage';
 
@@ -39,7 +37,7 @@ export default function CreatePost() {
 
     const prepareTemplate = async () => {
       try{
-        await prepareTemplateToPost(templateId, canvasRef.current!, divRef.current!);
+        await prepareTemplateToPost(templateId, canvasRef.current, divRef.current);
       } catch(e) {
         if(e instanceof Error) setError(e.message)
         else setError('Error setting the template')
@@ -60,13 +58,14 @@ export default function CreatePost() {
     <>
      {loading && <LoadingPage className='text-white' />}
     <div 
-      className={"flex items-center gap-6 flex-col md:justify-center md:flex-row min-h-[calc(100vh-64px)] py-8" + (loading ? " hidden" : "")}
+      className={"flex items-center gap-6 flex-col md:justify-center lg:flex-row min-h-[calc(100vh-64px)] py-8" + (loading ? " hidden" : "")}
     >
       <div 
         className='flex flex-col'
       >
         <div 
-          className='relative w-[320px] overflow-hidden h-auto bg-gray-700 border-1 border-gray-500 z-0'
+          className='relative overflow-hidden bg-gray-700 z-0'
+          style={{width: '320px', height: 'auto'}}
           ref={divRef}
         >
           <canvas ref={canvasRef} />
@@ -92,21 +91,14 @@ export default function CreatePost() {
           }
         </div>
 
-          <div
-            className='flex gap-2 justify-around'
-          >
-            <button 
-              onClick={async () => await downloadImage(canvasRef.current!, divRef.current!)}
-              className="mt-4 px-2 py-2 bg-blue-500 hover:bg-blue-700 duration-300 text-white rounded"
-            >
-              <Download size={16} />
-            </button>
-          </div>
-
       </div>
-
-      <TextBox textBoxes={textBoxes} setTextBoxes={setTextBoxes} />
-      
+      <TextBox 
+        canvas={canvasRef.current!} 
+        container={divRef.current!}
+        templateId={templateId} 
+        textBoxes={textBoxes} 
+        setTextBoxes={setTextBoxes} 
+      />
     </div>
   </>
   );
