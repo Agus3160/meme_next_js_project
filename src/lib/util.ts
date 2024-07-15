@@ -20,6 +20,23 @@ const getFormattedDate = (date:Date) => {
   return `${year}_${month}_${day}_${hours}${minutes}${seconds}${milliseconds}`;
 };
 
+//Create an urlsearchparam string by an object
+export const objectToUrlParams = (obj: object) => {
+  const urlSearchParams = new URLSearchParams();
+  Object.entries(obj).map(([key, value]) => urlSearchParams.append(key, String(value)))
+  return urlSearchParams.toString();
+}
+
+export function getSearchParams<T>(searchParams: URLSearchParams, keys: (keyof T)[]): Partial<T> {
+  const result: Partial<T> = {}
+  keys.forEach(key => {
+    const value = searchParams.get(key as string)
+    if (value !== null) {
+      result[key] = value as unknown as T[keyof T]  
+    }
+  })
+  return result
+}
 
 export {
   base64ToBlob,

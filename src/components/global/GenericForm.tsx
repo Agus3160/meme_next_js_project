@@ -8,11 +8,13 @@ import { ApiResponse } from '@/lib/definitions'
 import { toast } from 'react-toastify'
 import GenericInput from '../forms/GenericInput'
 import SubmitButton from '../forms/SubmitButton'
+import { useRouter } from 'next/navigation'
 
 interface CustomFormProps<D, T extends FieldValues > {
   title: string
   buttonText: string
   icon?: React.ReactNode
+  redirect?: string
   schema: ZodSchema<T>
   onSubmit: (data: T) => Promise<ApiResponse<D>>
   fields: {
@@ -23,14 +25,20 @@ interface CustomFormProps<D, T extends FieldValues > {
   }[]
 }
 
-export default function GenericForm<D, T extends FieldValues>({ schema, onSubmit, fields, title, buttonText, icon }: CustomFormProps<D,T>) {
+export default function GenericForm<D, T extends FieldValues>({ schema, onSubmit, fields, title, buttonText, icon, redirect }: CustomFormProps<D,T>) {
+  
+  const router = useRouter()
+  
   const { handleSubmit, register, formState: { errors, isSubmitting } }: UseFormReturn<T> = useForm<T>({
     resolver: zodResolver(schema),
   })
 
   const handleFormSubmit = async (data: T) => {
     const { success, error, message } = await onSubmit(data)
-    if (success && message) toast.success(message, { type: "success" })
+    if (success && message) {
+      toast.success(message, { type: "success" })
+      redirect && router.push(redirect)
+    }
     if (error) toast.error(error, { type: "error" })
   }
 

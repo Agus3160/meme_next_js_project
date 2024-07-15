@@ -8,6 +8,8 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams
 
+  const user = searchParams.get('user')
+  const name = searchParams.get('name')
   const upTo = searchParams.get('upTo') || 10
   const skip = searchParams.get('skip') || 0
 
@@ -37,14 +39,15 @@ export async function POST(req: NextRequest,) {
 
   if(!result.success) return generateApiErrorResponse(result.error.errors[0].message, 400)
 
-  const { urlBlurImg, urlOriginalImg, pathBlurImg, pathOriginalImg } = result.data
+  const { urlBlurImg, urlOriginalImg, pathBlurImg, pathOriginalImg, imageType } = result.data
   try{
     const image = await prisma.image.create({
       data: {
         urlBlurImg,
         urlOriginalImg,
         pathBlurImg,
-        pathOriginalImg
+        pathOriginalImg,
+        imageType
       }
     })
     return generateApiSuccessResponse('Image created successfully', 201, image)

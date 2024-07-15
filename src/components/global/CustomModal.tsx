@@ -1,14 +1,17 @@
+import { LoaderCircle } from 'lucide-react'
 import React from 'react'
 
 type Props = {
   onClose: () => void
-  onSubmit: () => void
+  onSubmit?: () => void
   type: "button" | "submit"
   title?: string
+  backTitle?: string
   buttonTitle?: string
   description?: string
   children?: React.ReactNode
   moreButton?:React.ReactNode
+  isLoading?: boolean
 }
 
 export default function CustomModal({
@@ -19,7 +22,9 @@ export default function CustomModal({
   buttonTitle,
   type,
   children,
-  moreButton
+  backTitle,
+  moreButton,
+  isLoading
 }: Props) {
   return (
     <div
@@ -33,18 +38,23 @@ export default function CustomModal({
           <button
             onClick={onClose}
             type='button'
-            className='bg-gray-500 gap-1 p-2 flex items-center rounded text-white duration-300 active:bg-red-500 hover:bg-gray-600 hover:text-slate-100'
+            className='bg-gray-500 gap-1 p-2 flex items-center rounded text-white duration-300 active:bg-gray-700 hover:bg-gray-600 hover:text-slate-100'
           >
-            <span>Cancel</span>
+            <span>{backTitle||"Back"}</span>
           </button>
           {moreButton}
-          <button
-            onClick={onSubmit}
-            type={type}
-            className='bg-blue-700 gap-1 p-2 flex items-center rounded text-white duration-300 active:bg-green-500 hover:bg-blue-800 hover:text-slate-100'
-          >
-            <span>{buttonTitle||"Submit"}</span>
-          </button>
+
+          {
+            <button
+              onClick={onSubmit}
+              type={type}
+              disabled={isLoading}
+              className='bg-blue-700 disabled:opacity-50 gap-1 p-2 flex items-center rounded text-white duration-300 active:bg-green-500 hover:bg-blue-800 hover:text-slate-100'
+            >
+              <span>{buttonTitle||"Submit"}</span>
+              {isLoading !==undefined && isLoading && <LoaderCircle size={16} className='animate-spin'/>}
+            </button>
+          }
         </div>
       </div>
     </div>

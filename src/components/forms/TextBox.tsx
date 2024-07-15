@@ -4,11 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { CirclePlus, X, ChevronUp, ChevronDown, Brush, Save, LoaderCircle, Download } from 'lucide-react';
-import { TypeTextBoxSchema, textBoxSchema, TypePostSchema, postSchema } from '@/lib/definitions';
+import { TypeTextBoxSchema, TypePostSchema, postSchema } from '@/lib/definitions';
 import GenericInput from './GenericInput';
 import { generateCanvas, resizeCanvas } from '@/lib/post/utils';
 import CustomModal from '../global/CustomModal';
 import { toast } from 'react-toastify';
+import createPost from '@/lib/post/createPost';
 
 type Props = {
   templateId: string;
@@ -63,11 +64,14 @@ export default function TextBox({ textBoxes, setTextBoxes, templateId, canvas, c
     setTextBoxes(watchAll.textBoxArray as TypeTextBoxSchema[] || []);
   }, [watchAll, setTextBoxes]);
 
-  const onSubmit = (data: TypePostSchema) => {
-    console.log(data);
+  const onSubmit = async (data: TypePostSchema) => {
+    const {error, message, success} = await createPost({title: data.title, templateId: data.templateId, base64Images: data.base64Images})
+    if(success){ 
+      toast.success(message)
+      setStep(0)
+    }
+    else toast.error(error)
   };
-
-  console.log(errors);
 
   return (
     <form
@@ -78,11 +82,11 @@ export default function TextBox({ textBoxes, setTextBoxes, templateId, canvas, c
         step===1 && 
         <CustomModal 
           onClose={() => setStep(0)} 
-          onSubmit={() => {setStep(0)}} 
           type="submit" 
           title="This is your meme" 
           buttonTitle="Publish" 
           description="This is a preview to check if everything is correct" 
+          isLoading={isSubmitting}
           moreButton={
             <button 
               type='button'
@@ -108,7 +112,7 @@ export default function TextBox({ textBoxes, setTextBoxes, templateId, canvas, c
 
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-2'>
-          {isSubmitting ? <LoaderCircle size={32} className='animate-spin' /> : <Brush size={32} className='' />}
+          <Brush size={32} className='' />
           <h2 className='text-white text-2xl'>Edit Console</h2>
         </div>
         <button
@@ -118,7 +122,6 @@ export default function TextBox({ textBoxes, setTextBoxes, templateId, canvas, c
             if(
               !isValid
             ) {
-              console.log(errors);
               return;
             }else{
               const imageCanvas = await generateCanvas(canvas, container);
@@ -133,7 +136,7 @@ export default function TextBox({ textBoxes, setTextBoxes, templateId, canvas, c
           type='button'
           className='bg-slate-700 gap-1 p-1 flex items-center rounded text-white duration-300 active:bg-green-500 hover:bg-green-700 hover:text-slate-100'
         >
-          {isSubmitting? <LoaderCircle size={32} className='animate-spin' /> : <Save size={32} />}
+          <Save size={32} />
           <p>Save</p>
         </button>
       </div>

@@ -21,6 +21,7 @@ export default function ToastProvider({ children }: ToastProviderProps) {
       newestOnTop={false}
       closeOnClick
       rtl={false}
+      className={"z-[10000]"}
       pauseOnFocusLoss
       draggable
       pauseOnHover

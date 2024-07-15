@@ -15,6 +15,7 @@ export default function LoginForm({}: Props) {
       buttonText="Sign In"
       schema={signInSchema}
       onSubmit={signInHandler}
+      redirect="/"
       fields={[
         { name: 'email', label: 'Email', type: 'email', placeholder: 'example@gmail.com' },
         { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter your password' },

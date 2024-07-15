@@ -1,3 +1,4 @@
+import { Image, Post } from '@prisma/client';
 import z from 'zod'
 
 //SIGNUP UP ZOD SCHEMA
@@ -55,6 +56,7 @@ export const imageSchema = z.object({
   urlBlurImg: z.string().min(1, { message: 'An url of blur version of the image is required' }),
   pathOriginalImg: z.string().min(1, { message: 'An path of the image is required' }),
   pathBlurImg: z.string().min(1, { message: 'An path of blur version of the image is required' }),
+  imageType: z.string().min(1, { message: 'An image type is required' }),
 })
 export type TypeImageSchema = z.infer<typeof imageSchema>
 
@@ -72,19 +74,7 @@ export type FilterData<T> = {
   count: number
 }
 
-export type UserFilter = {
-  email?:string
-  username?:string
-  name?:string
-  createdAt?:{
-    gte?:Date
-    lte?:Date
-  }
-  updatedAt?:{
-    gte?:Date
-    lte?:Date
-  }
-  id?:string
-  quantity?:number
-  skip?:number
-}
+//IMAGES PATH
+export type ImagesPath = "post" | "template" | "user"
+
+export type PostType = Post & { template: {id:string} } & {image: Image} & {author: {id:string} }

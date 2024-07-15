@@ -4,8 +4,21 @@ import Image from 'next/image'
 import React, { useState } from 'react'
 import { Menu } from 'lucide-react'
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import logOut from '@/lib/auth/logOut';
+
+type navBarLink = {
+  id: number,
+  text: string,
+  url?: string,
+  isForNav: boolean
+  onClick?: () => void
+}
 
 export default function NavBar() {
+
+  const { data: session } = useSession();
+
   // State to manage the navbar's visibility
   const [nav, setNav] = useState(false);
 
@@ -15,15 +28,24 @@ export default function NavBar() {
   };
 
   // Array containing navigation items
-  const navItems = [
-    { id: 1, text: 'Home', url: '/' },
-    { id: 2, text: 'SignUp', url: '/signup' },
-    { id: 3, text: 'Login', url: '/login' },
+  const navItems: navBarLink[] = 
+  session?
+  [
+    { id: 1, text: session.user.username, url: '/profile', isForNav: true },
+    { id: 2, text: 'Logout', url: '/api/auth/signout', isForNav: false, onClick: logOut },
+  ]
+    :
+  [
+    { id: 1, text: 'SignUp', url: '/signup', isForNav: true },
+    { id: 2, text: 'Login', url: '/login', isForNav: true },
   ];
 
   return (
-    <div className='bg-slate-700 flex justify-between items-center h-16 p-2 text-white '>
-      <div className='flex gap-2 items-center'>
+    <div className='bg-slate-700 flex justify-between items-center h-16 p-2 md:px-6 text-white '>
+      <Link href={{
+        pathname: "/",
+        
+      }} className='flex gap-2 items-center'>
         <Image 
           src="/img/mememundi.webp"
           alt="logo"
@@ -31,15 +53,20 @@ export default function NavBar() {
           height={48}
         />
         <h1 className='text-3xl font-bold'>Mememundi</h1>
-      </div>
+      </Link>
 
       <ul className='hidden gap-4 md:flex'>
         {navItems.map(item => (
           <li
             key={item.id}
-            className='duration-300 hover:text-gray-400 cursor-pointer'
+            className='duration-300 hover:text-gray-400 cursor-pointer w-18'
           >
-            <Link href={item.url}>{item.text}</Link>
+            {
+              item.isForNav && item.url ?
+               <Link href={item.url}>{item.text}</Link>
+              :
+              <button onClick={item.onClick}>{item.text}</button>
+            }
           </li>
         ))}
       </ul>
@@ -58,14 +85,24 @@ export default function NavBar() {
         <h1 className='w-full text-3xl font-bold text-white m-4'>Menu</h1>
 
         {navItems.map(item => (
-          <Link
-            key={item.id}
-            href={item.url}
-            className=' '
-          >
-            <p className='w-full p-4 border-b hover:bg-blue-900 duration-300 hover:text-black cursor-pointer border-gray-600' >{item.text}</p>
-          </Link>
+            item.isForNav && item.url ?
+              <Link
+                key={item.id}
+                href={item.url}
+              >
+                <p className='w-full p-4 border-b hover:bg-blue-900 duration-300 hover:text-black cursor-pointer border-gray-600' >{item.text}</p>
+              </Link>
+            :
+            <button
+              key={item.id}
+              onClick={item.onClick}
+              className='w-full p-4 text-left border-b hover:bg-blue-900 duration-300 hover:text-black cursor-pointer border-gray-600'
+            >
+              <p >{item.text}</p>
+            </button>
         ))}
+
+        <button ></button>
       </ul>
     </div>
   );

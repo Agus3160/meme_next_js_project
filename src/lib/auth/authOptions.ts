@@ -1,8 +1,9 @@
 import CredentialsProvider from "next-auth/providers/credentials"
 import prisma from "@/lib/db"
 import bcrypt from "bcrypt"
+import { NextAuthOptions } from "next-auth"
 
-const authOptions = {
+const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
@@ -28,12 +29,29 @@ const authOptions = {
         return{
           id: user.id,
           username: user.username,
-          email: user.email,
         }
       }
   })
   ],
-
+  callbacks:{
+    async jwt(params) {
+      const {token, user} = params
+      if(user) {
+        token.username = user.username
+        token.id = user.id
+      }
+      return token
+    }, 
+    async session(params) {
+      const {token, session} = params
+      if (token) {
+        session.user = session.user || null
+        session.user.id = token.id;
+        session.user.username = token.username;
+      }
+      return session
+    },
+  },
   pages: {
     signIn:"/login",
     error:"/login"

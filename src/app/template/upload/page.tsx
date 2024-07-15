@@ -97,10 +97,10 @@ export default function UploadTemplate() {
       <div
         className='flex flex-col md:flex-row gap-4 items-center justify-center'
       >
-        <div className={`bg-slate-500 w-full flex flex-col items-center justify-center rounded ${src.length > 0 ? "h-auto" : "md:h-72 h-48"}`}>
+        <div className={`bg-slate-500 flex flex-col items-center justify-center rounded ${src.length > 0 ? "h-auto" : "md:h-72 h-48 md:w-72 w-48"}`}>
           {
             src.length > 0 ?
-              <img className='w-full h-auto' src={src}></img>
+              <img className='w-full max-w-[500px] h-auto' src={src}></img>
               :
               <div className='flex flex-col items-center justify-center'>
                 <Images size={64} className='text-slate-600' />

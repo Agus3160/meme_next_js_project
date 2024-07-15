@@ -34,6 +34,7 @@ model Template {
   desc  String
   imageId String @unique
 
+  post Post?
   image Image @relation(fields: [imageId], references: [id])
 
   createdAt DateTime @default(now())
@@ -49,6 +50,8 @@ model Image {
   pathOriginalImg String @unique
   pathBlurImg String     @unique
 
+  imageType String
+
   templates Template? 
   post Post?
 
@@ -61,8 +64,10 @@ model Post {
 
   title  String
   imageId String @unique
+  templateId String @unique
   authorId String
 
+  template Template @relation(fields: [templateId], references: [id])
   image Image @relation(fields: [imageId], references: [id])
   author User @relation(fields: [authorId], references: [id])
 

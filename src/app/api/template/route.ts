@@ -47,14 +47,15 @@ export async function POST(req: NextRequest,) {
           urlOriginalImg: "",
           urlBlurImg: "",
           pathOriginalImg: "",
-          pathBlurImg: ""
+          pathBlurImg: "",
+          imageType: contentType
         },
         select:{
           id: true
         }
       })
 
-      const saveImageResult = await saveImage(base64Images, contentType, imageTx.id)
+      const saveImageResult = await saveImage("template",base64Images, contentType, imageTx.id)
 
       const imageUpdateTx = await tx.image.update({
         where: {
