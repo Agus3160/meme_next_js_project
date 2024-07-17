@@ -10,5 +10,4 @@ const signInHandler = async (data: TypeSignInSchema): Promise<ApiResponse> => {
   return {success: true, message:"Sign in successful"}
 }
 
-
 export { signInHandler }

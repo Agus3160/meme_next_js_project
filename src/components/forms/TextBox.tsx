@@ -10,6 +10,7 @@ import { generateCanvas, resizeCanvas } from '@/lib/post/utils';
 import CustomModal from '../global/CustomModal';
 import { toast } from 'react-toastify';
 import createPost from '@/lib/post/createPost';
+import { useSession } from 'next-auth/react';
 
 type Props = {
   templateId: string;
@@ -30,6 +31,7 @@ const defaultValue = {
 
 export default function TextBox({ textBoxes, setTextBoxes, templateId, canvas, container }: Props) {
 
+  const {data:session} = useSession();
   const [showDetail, setShowDetail] = useState<boolean[]>(new Array(textBoxes.length).fill(false));
   const [step, setStep] = useState<number>(0);
 
@@ -51,8 +53,6 @@ export default function TextBox({ textBoxes, setTextBoxes, templateId, canvas, c
     },
   });
 
-  console.log(getValues());
-
   const { fields, append, remove } = useFieldArray({
     name: 'textBoxArray',
     control,
@@ -65,6 +65,10 @@ export default function TextBox({ textBoxes, setTextBoxes, templateId, canvas, c
   }, [watchAll, setTextBoxes]);
 
   const onSubmit = async (data: TypePostSchema) => {
+    if(!session) {
+      toast.error("You need to be logged in to create a post")
+      return
+    }
     const {error, message, success} = await createPost({title: data.title, templateId: data.templateId, base64Images: data.base64Images})
     if(success){ 
       toast.success(message)

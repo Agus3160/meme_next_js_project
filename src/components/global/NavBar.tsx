@@ -4,20 +4,22 @@ import Image from 'next/image'
 import React, { useState } from 'react'
 import { Menu } from 'lucide-react'
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import logOut from '@/lib/auth/logOut';
+import { Session } from 'next-auth';
+
+type Props = {
+  session:Session | null
+}
 
 type navBarLink = {
   id: number,
   text: string,
   url?: string,
-  isForNav: boolean
+  isForNav: boolean,
   onClick?: () => void
 }
 
-export default function NavBar() {
-
-  const { data: session } = useSession();
+export default function NavBar({ session }: Props) {
 
   // State to manage the navbar's visibility
   const [nav, setNav] = useState(false);
@@ -31,13 +33,17 @@ export default function NavBar() {
   const navItems: navBarLink[] = 
   session?
   [
-    { id: 1, text: session.user.username, url: '/profile', isForNav: true },
-    { id: 2, text: 'Logout', url: '/api/auth/signout', isForNav: false, onClick: logOut },
+    { id: 0, text: 'Home', url: '/', isForNav: true },
+    { id: 1, text: 'Template', url: '/template', isForNav: true },
+    { id: 2, text: session.user.username, url: `/profile/${session.user.username}`, isForNav: true },
+    { id: 3, text: 'Logout', url: '/api/auth/signout', isForNav: false, onClick: logOut },
   ]
     :
   [
+    { id: 0, text: 'Home', url: '/', isForNav: true },
     { id: 1, text: 'SignUp', url: '/signup', isForNav: true },
     { id: 2, text: 'Login', url: '/login', isForNav: true },
+    { id: 3, text: 'Template', url: '/template', isForNav: true },
   ];
 
   return (
@@ -101,8 +107,6 @@ export default function NavBar() {
               <p >{item.text}</p>
             </button>
         ))}
-
-        <button ></button>
       </ul>
     </div>
   );

@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { TypeSignUpSchema, UserFilter } from "@/lib/definitions";
+import { TypeSignUpSchema } from "@/lib/definitions";
 
 const createUser = async (params:TypeSignUpSchema) =>{
   return await prisma.user.create({
@@ -12,44 +12,13 @@ const createUser = async (params:TypeSignUpSchema) =>{
   })
 }
 
-const getUser = async (filter?:UserFilter) =>{
+const getUser = async () =>{
   
   const value = await prisma.user.findMany({
-    where: {
-      email: filter?.email,
-      username:{ startsWith: filter?.username },
-      name: { startsWith:filter?.name },
-      createdAt:{ 
-        gte:filter?.createdAt?.gte,
-        lte:filter?.createdAt?.lte
-      },
-      updatedAt:{ 
-        gte:filter?.updatedAt?.gte,
-        lte:filter?.updatedAt?.lte
-      },
-      id: filter?.id
-    },
     orderBy: { createdAt: 'desc' },
-    take: filter?.quantity,
-    skip: filter?.skip
   })
 
-  const count = await prisma.user.count({
-    where: {
-      email: filter?.email,
-      username:{ startsWith: filter?.username },
-      name: { startsWith:filter?.name },
-      createdAt:{ 
-        gte:filter?.createdAt?.gte,
-        lte:filter?.createdAt?.lte
-      },
-      updatedAt:{ 
-        gte:filter?.updatedAt?.gte,
-        lte:filter?.updatedAt?.lte
-      },
-      id: filter?.id
-    }
-  })
+  const count = await prisma.user.count( )
 
   return {value: value, count: count}
 }

@@ -23,7 +23,7 @@ export default function CreatePost() {
 
   const searchParams = useSearchParams()
   const templateId = searchParams.get('templateId')
-  
+
   const [textBoxes, setTextBoxes] = useState<TypeTextBoxSchema[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -33,73 +33,75 @@ export default function CreatePost() {
 
   useEffect(() => {
 
-    if(!canvasRef.current || !divRef.current || !templateId) return 
+    if (!canvasRef.current || !divRef.current || !templateId) return
 
     const prepareTemplate = async () => {
-      try{
+      try {
         await prepareTemplateToPost(templateId, canvasRef.current, divRef.current);
-      } catch(e) {
-        if(e instanceof Error) setError(e.message)
+      } catch (e) {
+        if (e instanceof Error) setError(e.message)
         else setError('Error setting the template')
-      }finally{
+      } finally {
         setLoading(false)
       }
     }
 
     prepareTemplate()
 
-  },[templateId]);
+  }, [templateId]);
 
 
-  if(error) return <ErrorPage error={error} />
-  if(!templateId) return <ErrorPage error="You have to specify a template" />
+  if (error) return <ErrorPage error={error} />
+  if (!templateId) return <ErrorPage error="You have to specify a template" />
 
   return (
     <>
-     {loading && <LoadingPage className='text-white' />}
-    <div 
-      className={"flex items-center gap-6 flex-col md:justify-center lg:flex-row min-h-[calc(100vh-64px)] py-8" + (loading ? " hidden" : "")}
-    >
-      <div 
-        className='flex flex-col'
+      {loading && <LoadingPage className='text-white' />}
+      <div
+        className={"flex items-center gap-6 flex-col md:justify-center lg:flex-row min-h-[calc(100vh-64px)] py-8" + (loading ? " hidden" : "")}
       >
-        <div 
-          className='relative overflow-hidden bg-gray-700 z-0'
-          style={{width: '320px', height: 'auto'}}
-          ref={divRef}
+        <div
+          className='flex flex-col'
         >
-          <canvas ref={canvasRef} />
-          {
-            textBoxes.map((textBox, index) => {
-              return (
-                <CustomDraggable 
-                  key={index}
-                  rotate={textBox.rotate} 
-                  minHeight={32}
-                  minWidth={32}  
-                >
-                <FontEditor
-                  text={textBox.text}
-                  fontSize={textBox.fontSize}
-                  textColor={textBox.textColor}
-                  borderColor={textBox.borderColor}
-                  fontFamily={textBox.fontFamily}
-                />
-                </CustomDraggable>
-              )
-            })
-          }
+          <div
+            className='relative overflow-hidden bg-gray-700 z-0'
+            style={{ width: '320px', height: 'auto' }}
+            ref={divRef}
+          >
+            <canvas ref={canvasRef} />
+            {
+              textBoxes.map((textBox, index) => {
+                return (
+                  <CustomDraggable
+                    key={index}
+                    rotate={textBox.rotate}
+                    minHeight={32}
+                    minWidth={32}
+                  >
+                    <FontEditor
+                      text={textBox.text}
+                      fontSize={textBox.fontSize}
+                      textColor={textBox.textColor}
+                      borderColor={textBox.borderColor}
+                      fontFamily={textBox.fontFamily}
+                    />
+                  </CustomDraggable>
+                )
+              })
+            }
+          </div>
+
         </div>
 
+        <TextBox
+          canvas={canvasRef.current!}
+          container={divRef.current!}
+          templateId={templateId}
+          textBoxes={textBoxes}
+          setTextBoxes={setTextBoxes}
+        />
+
       </div>
-      <TextBox 
-        canvas={canvasRef.current!} 
-        container={divRef.current!}
-        templateId={templateId} 
-        textBoxes={textBoxes} 
-        setTextBoxes={setTextBoxes} 
-      />
-    </div>
-  </>
+    </>
   );
 }

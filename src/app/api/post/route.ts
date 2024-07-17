@@ -47,6 +47,7 @@ export async function GET(req: NextRequest) {
       author:{
         select:{
           id: true,
+          username: true
         }
       }
     }
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session) return generateApiErrorResponse("Unauthorized", 401);
+    if (!session) return generateApiErrorResponse("You must be logged in to create a post", 401);
 
     const body = await req.json();
 
@@ -126,16 +127,17 @@ export async function POST(req: NextRequest) {
       });
 
       return { post };
-    });
+    }, { maxWait: 10000, timeout: 7500 });
 
     return generateApiSuccessResponse('Image created successfully', 201, transactionResult);
   } catch (error) {
+    console.error(error);
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2002") return generateApiErrorResponse("Image already exists", 500);
+      else return generateApiErrorResponse("Something went wrong", 500);
     } else if (error instanceof ApiError) {
       return generateApiErrorResponse(error.message, error.statusCode);
     } else {
-      console.error(error);
       return generateApiErrorResponse("Something went wrong", 500);
     }
   }

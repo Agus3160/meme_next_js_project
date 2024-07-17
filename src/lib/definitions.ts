@@ -1,4 +1,4 @@
-import { Image, Post } from '@prisma/client';
+import { Image, Post, Template } from '@prisma/client';
 import z from 'zod'
 
 //SIGNUP UP ZOD SCHEMA
@@ -77,4 +77,6 @@ export type FilterData<T> = {
 //IMAGES PATH
 export type ImagesPath = "post" | "template" | "user"
 
-export type PostType = Post & { template: {id:string} } & {image: Image} & {author: {id:string} }
+export type PostType = Post & { template: {id:string} } & {image: Image} & {author: {id:string, username:string} }
+
+export type TemplateType = Template & { image: Image } & { author: {username:string} }

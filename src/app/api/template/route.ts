@@ -1,22 +1,35 @@
 import { generateApiErrorResponse, generateApiSuccessResponse } from '@/lib/api/global';
+import authOptions from '@/lib/auth/authOptions';
 import prisma from '@/lib/db';
 import {templateSchema} from '@/lib/definitions';
 import { saveImage } from '@/lib/firebase/service';
+import { TemplateFilter } from '@/lib/template/getAllTemplates';
+import { getSearchParams } from '@/lib/util';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { getServerSession } from 'next-auth';
 import { ApiError } from 'next/dist/server/api-utils';
 import { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams
 
-  const upTo = searchParams.get('upTo') || 10
-  const skip = searchParams.get('skip') || 0
+  const keys:(keyof TemplateFilter)[] = ['title', 'skip', 'limit', 'name']; 
+
+  const filter: TemplateFilter = getSearchParams(searchParams, keys);
 
   const templates = await prisma.template.findMany({
-    take: Number(upTo),
-    skip: Number(skip),
+    take: Number(filter.limit || 16),
+    skip: Number(filter.skip || 0),
     orderBy: {
       createdAt: 'desc'
+    },
+    include:{
+      image:true,
+      author:{
+        select:{
+          username: true
+        }
+      }
     }
   })
 
@@ -31,6 +44,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest,) {
+
+  const session = await getServerSession(authOptions);
+
+  if (!session) return generateApiErrorResponse("You must be logged in to upload a template", 401);
 
   const body = await req.json()
 
@@ -73,6 +90,7 @@ export async function POST(req: NextRequest,) {
         data: {
           name,
           desc,
+          authorId:session.user.id,
           imageId:imageTx.id
         }
       })

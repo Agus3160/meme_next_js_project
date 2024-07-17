@@ -10,8 +10,14 @@ import SubmitButton from '@/components/forms/SubmitButton';
 import createTemplate from '@/lib/template/createTemplate';
 import { toast } from 'react-toastify';
 import { Images } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import ErrorPage from '@/components/pages/ErrorPage';
 
 export default function UploadTemplate() {
+
+  const { data: session } = useSession();
+
+  if(!session) return <ErrorPage error="You need to be logged in to upload a template" />
 
   const [src, setSrc] = React.useState('')
   const [file, setFile] = React.useState<File | null>(null)
