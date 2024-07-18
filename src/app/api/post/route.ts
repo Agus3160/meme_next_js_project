@@ -38,6 +38,11 @@ export async function GET(req: NextRequest) {
       createdAt: 'desc'
     },
     include:{
+      _count:{
+        select:{
+          likes: true
+        }
+      },
       image:true,
       template:{
         select:{

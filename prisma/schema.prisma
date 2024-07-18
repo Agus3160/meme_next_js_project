@@ -22,6 +22,8 @@ model User {
   password String
 
   posts Post[]
+  likes Like[]
+  comments Comment[]
   templates Template[]
 
   createdAt DateTime @default(now())
@@ -70,10 +72,46 @@ model Post {
   templateId String 
   authorId String
 
+  comments Comment[]
+  likes Like[]
+
   template Template @relation(fields: [templateId], references: [id])
   image Image @relation(fields: [imageId], references: [id])
   author User @relation(fields: [authorId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Comment {
+  id    String @id @default(uuid())
+
+  content  String
+  userId String @map("authorId")
+  postId String
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  deleted DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Like {
+  id    String @id @default(uuid())
+
+  userId String @map("authorId")
+  postId String
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  deleted DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, postId])
 }

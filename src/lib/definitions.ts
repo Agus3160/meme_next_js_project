@@ -77,6 +77,12 @@ export type FilterData<T> = {
 //IMAGES PATH
 export type ImagesPath = "post" | "template" | "user"
 
-export type PostType = Post & { template: {id:string} } & {image: Image} & {author: {id:string, username:string} }
+//LIKE POST TYPE
+export const likeSchema = z.object({
+  postId: z.string().min(1, { message: 'Post id is required' }),
+})
+export type TypeLikeSchema = z.infer<typeof likeSchema>
+
+export type PostType = Post & { template: {id:string} } & {_count: {likes: number}} & {image: Image} & {author: {id:string, username:string} }
 
 export type TemplateType = Template & { image: Image } & { author: {username:string} }

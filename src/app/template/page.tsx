@@ -83,7 +83,7 @@ export default function Template() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 justify-items-center w-full gap-6 my-12">
         {templates.map((template) => (
           <div key={template.id}
-            className=" rounded w-[155px] sm:w-[225px] justify-self-center"
+            className="shadow-md rounded w-[155px] sm:w-[225px] justify-self-center"
           >
             <div className="relative w-full h-[200px] sm:h-[200px]" >
               <Image
@@ -108,7 +108,7 @@ export default function Template() {
             <div className="flex gap-4 flex-col items-center p-4 bg-slate-800 rounded-b">
               <h2 className="font-bold line-clamp-1">{template.name}</h2>
               <Link className="text-sm p-1 bg-blue-500 hover:bg-blue-600 text-center rounded" href={`/post/create?templateId=${template.id}`}>Make meme</Link>
-              <span className="text-sm">uploaded by {template.author.username}</span>
+              <span className="text-sm">uploaded by <Link className="text-blue-400 hover:text-blue-500 hover:underline" href={`/profile/${template.author.username}`}>{template.author.username}</Link></span>
             </div>
           </div>
         ))}
